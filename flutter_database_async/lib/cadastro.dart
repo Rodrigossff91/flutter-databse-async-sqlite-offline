@@ -62,6 +62,9 @@ class _CadastroState extends State<Cadastro> {
         appBar: AppBar(
           centerTitle: true,
           title: const Text('Cadastro'),
+          actions: const [
+            Icon(Icons.autorenew_rounded),
+          ],
         ),
         body: OfflineBuilder(
             connectivityBuilder: (

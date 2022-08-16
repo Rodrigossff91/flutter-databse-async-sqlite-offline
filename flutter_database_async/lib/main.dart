@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_database_async/cadastro.dart';
 import 'package:flutter_database_async/splash_screen.dart';
 
+import 'list_async.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -23,7 +25,11 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      routes: {'/cadastro': (context) => const Cadastro()},
+      debugShowCheckedModeBanner: false,
+      routes: {
+        '/cadastro': (context) => const Cadastro(),
+        '/listAsync': (context) => const ListAsync()
+      },
       initialRoute: '/',
       title: 'Flutter Database Async',
       theme: ThemeData(

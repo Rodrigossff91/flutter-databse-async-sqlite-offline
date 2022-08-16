@@ -15,9 +15,10 @@ class Cadastro extends StatefulWidget {
 class _CadastroState extends State<Cadastro> {
   late DatabaseHelper dbHelper;
   late TextEditingController nome;
-  late TextEditingController sobrenome;
-  late TextEditingController email;
-  late TextEditingController cfm;
+  late TextEditingController cdBenefi;
+  late TextEditingController dataNasc;
+  late TextEditingController cidade;
+  late TextEditingController telefone;
 
   late Database connection;
 
@@ -25,19 +26,28 @@ class _CadastroState extends State<Cadastro> {
   void initState() {
     _database();
     nome = TextEditingController();
-    sobrenome = TextEditingController();
-    email = TextEditingController();
-    cfm = TextEditingController();
+    cdBenefi = TextEditingController();
+    dataNasc = TextEditingController();
+    cidade = TextEditingController();
+    telefone = TextEditingController();
 
     super.initState();
   }
 
   insertDataBase(
       {required String nome,
-      required String sobrenome,
-      required String email,
-      required String cfm}) async {
-    dbHelper.insert(nome: nome, sobrenome: sobrenome, email: email, cfm: cfm);
+      required String codigoBene,
+      required String dataNasc,
+      required String sexo,
+      required String telefone,
+      required String cidade}) async {
+    await dbHelper.insert(
+        nome: nome,
+        codigoBene: codigoBene,
+        dataNasc: dataNasc,
+        sexo: sexo,
+        telefone: telefone,
+        cidade: cidade);
 
     var result = await dbHelper.queryAllRows();
     log(result.toList().toString());
@@ -50,20 +60,30 @@ class _CadastroState extends State<Cadastro> {
   @override
   void dispose() {
     nome.dispose();
-    sobrenome.dispose();
-    email.dispose();
-    cfm.dispose();
+    cdBenefi.dispose();
+    dataNasc.dispose();
+    cidade.dispose();
+    telefone.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    FocusScope.of(context).unfocus();
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: const Text('Cadastro'),
-          actions: const [
-            Icon(Icons.autorenew_rounded),
+          actions: [
+            InkWell(
+              onTap: (() {
+                Navigator.of(context).pushNamed("/listAsync");
+              }),
+              child: const Padding(
+                padding: EdgeInsets.only(right: 10),
+                child: Icon(Icons.autorenew_rounded),
+              ),
+            ),
           ],
         ),
         body: OfflineBuilder(
@@ -89,77 +109,295 @@ class _CadastroState extends State<Cadastro> {
                       ),
                     ),
                   ),
-                  Column(
+                  ListView(
+                    shrinkWrap: true,
                     children: [
                       const SizedBox(
-                        height: 30,
+                        height: 100,
                       ),
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            controller: nome,
-                            decoration: const InputDecoration(hintText: 'Name'),
-                            onChanged: (text) {
-                              // do something with text
-                            },
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(left: 31, right: 29, top: 0),
+                        child: TextFormField(
+                          cursorColor: Colors.black,
+                          //   focusNode: sobrenome,
+                          textInputAction: TextInputAction.done,
+                          controller: nome,
+                          onChanged: (_) {},
+                          keyboardType: TextInputType.name,
+                          textCapitalization: TextCapitalization.sentences,
+                          //inputFormatters: [UpperCaseTextFormatter()],
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                              borderSide: const BorderSide(
+                                  width: 2, color: Colors.grey),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    const BorderSide(color: Color(0xFFE5E5E5)),
+                                borderRadius: BorderRadius.circular(12.0)),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 19, horizontal: 20),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0)),
+                            hintText: '',
+                            labelText: 'Nome',
                           ),
+                          onSaved: (String? value) {},
+                          validator: (String? value) {
+                            return (value != null && value.contains('@'))
+                                ? 'Do not use the @ char.'
+                                : null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(left: 31, right: 29, top: 20),
+                        child: TextFormField(
+                          cursorColor: Colors.black,
+                          //   focusNode: sobrenome,
+                          textInputAction: TextInputAction.done,
+                          controller: cdBenefi,
+                          onChanged: (_) {},
+                          keyboardType: TextInputType.name,
+                          textCapitalization: TextCapitalization.sentences,
+                          //inputFormatters: [UpperCaseTextFormatter()],
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                              borderSide: const BorderSide(
+                                  width: 2, color: Colors.grey),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    const BorderSide(color: Color(0xFFE5E5E5)),
+                                borderRadius: BorderRadius.circular(12.0)),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 19, horizontal: 20),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0)),
+                            hintText: '',
+                            labelText: 'Código Beneficiário',
+                          ),
+                          onSaved: (String? value) {},
+                          validator: (String? value) {
+                            return (value != null && value.contains('@'))
+                                ? 'Do not use the @ char.'
+                                : null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(left: 31, right: 29, top: 20),
+                        child: TextFormField(
+                          cursorColor: Colors.black,
+                          //   focusNode: sobrenome,
+                          textInputAction: TextInputAction.done,
+                          controller: dataNasc,
+                          onChanged: (_) {},
+                          keyboardType: TextInputType.name,
+                          textCapitalization: TextCapitalization.sentences,
+                          //inputFormatters: [UpperCaseTextFormatter()],
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                              borderSide: const BorderSide(
+                                  width: 2, color: Colors.grey),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    const BorderSide(color: Color(0xFFE5E5E5)),
+                                borderRadius: BorderRadius.circular(12.0)),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 19, horizontal: 20),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0)),
+                            hintText: '',
+                            labelText: 'Data de Nascimento',
+                          ),
+                          onSaved: (String? value) {},
+                          validator: (String? value) {
+                            return (value != null && value.contains('@'))
+                                ? 'Do not use the @ char.'
+                                : null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFFE5E5E5),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 35,
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  border: Border.all(color: Colors.black)),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            const Text('Masculino'),
+                            const Spacer(),
+                            Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  border: Border.all(color: Colors.black)),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            const Text('Feminino')
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFFE5E5E5),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding:
+                            const EdgeInsets.only(left: 31, right: 29, top: 20),
                         child: TextFormField(
-                          controller: sobrenome,
-                          decoration:
-                              const InputDecoration(hintText: 'Sobrenome'),
-                          onChanged: (text) {
-                            // do something with text
+                          cursorColor: Colors.black,
+                          //   focusNode: sobrenome,
+                          textInputAction: TextInputAction.done,
+                          controller: telefone,
+                          onChanged: (_) {},
+                          keyboardType: TextInputType.name,
+                          textCapitalization: TextCapitalization.sentences,
+                          //inputFormatters: [UpperCaseTextFormatter()],
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                              borderSide: const BorderSide(
+                                  width: 2, color: Colors.grey),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    const BorderSide(color: Color(0xFFE5E5E5)),
+                                borderRadius: BorderRadius.circular(12.0)),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 19, horizontal: 20),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0)),
+                            hintText: '',
+                            labelText: 'Tel',
+                          ),
+                          onSaved: (String? value) {},
+                          validator: (String? value) {
+                            return (value != null && value.contains('@'))
+                                ? 'Do not use the @ char.'
+                                : null;
                           },
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding:
+                            const EdgeInsets.only(left: 31, right: 29, top: 20),
                         child: TextFormField(
-                          controller: email,
-                          decoration: const InputDecoration(hintText: 'Email'),
-                          onChanged: (text) {
-                            // do something with text
+                          cursorColor: Colors.black,
+                          //   focusNode: sobrenome,
+                          textInputAction: TextInputAction.done,
+                          controller: cidade,
+                          onChanged: (_) {},
+                          keyboardType: TextInputType.name,
+                          textCapitalization: TextCapitalization.sentences,
+                          //inputFormatters: [UpperCaseTextFormatter()],
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                              borderSide: const BorderSide(
+                                  width: 2, color: Colors.grey),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    const BorderSide(color: Color(0xFFE5E5E5)),
+                                borderRadius: BorderRadius.circular(12.0)),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 19, horizontal: 20),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0)),
+                            hintText: '',
+                            labelText: 'Cidade',
+                          ),
+                          onSaved: (String? value) {},
+                          validator: (String? value) {
+                            return (value != null && value.contains('@'))
+                                ? 'Do not use the @ char.'
+                                : null;
                           },
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          controller: cfm,
-                          decoration: const InputDecoration(hintText: 'CFM'),
-                          onChanged: (text) {
-                            // do something with text
+                        padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * 0.0),
+                        child: GestureDetector(
+                          onTap: () async {
+                            await insertDataBase(
+                                nome: nome.text,
+                                codigoBene: cdBenefi.text,
+                                dataNasc: dataNasc.text,
+                                sexo: 'Masculino',
+                                telefone: telefone.text,
+                                cidade: cidade.text);
+
+                            setState(() {
+                              nome.text = '';
+                              cdBenefi.text = '';
+                              dataNasc.text = '';
+                              telefone.text = '';
+                              cidade.text = '';
+                            });
                           },
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          insertDataBase(
-                              nome: nome.text,
-                              sobrenome: sobrenome.text,
-                              email: email.text,
-                              cfm: cfm.text);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(40.0),
-                          child: Container(
-                            width: double.infinity,
-                            height: 50,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.blue),
-                            child: const Center(
-                                child: Text(
-                              'Salvar',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            )),
+                          child: Padding(
+                            padding: const EdgeInsets.all(40.0),
+                            child: Container(
+                              width: double.infinity,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.blue),
+                              child: const Center(
+                                  child: Text(
+                                'Salvar',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              )),
+                            ),
                           ),
                         ),
                       )
@@ -168,6 +406,6 @@ class _CadastroState extends State<Cadastro> {
                 ],
               );
             },
-            child: SizedBox.shrink()));
+            child: const SizedBox.shrink()));
   }
 }

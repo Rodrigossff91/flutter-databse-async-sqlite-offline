@@ -9,9 +9,11 @@ class DatabaseHelper {
 
   final columnId = 'id';
   final columnName = 'name';
-  final columnSobrenome = 'sobrenome';
-  final columnEmail = 'email';
-  final columnCfm = 'cfm';
+  final columnCodigoBene = 'codigoBene';
+  final columnDataNasc = 'dataNasc';
+  final columnSexo = 'sexo';
+  final columnTelefone = 'telefone';
+  final columnCidade = 'cidade';
 
   // make this a singleton class
   DatabaseHelper._privateConstructor();
@@ -36,24 +38,30 @@ class DatabaseHelper {
           CREATE TABLE $table (
             $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
             $columnName TEXT NOT NULL,
-            $columnSobrenome TEXT NOT NULL,
-            $columnEmail TEXT NOT NULL,
-            $columnCfm TEXT NOT NULL
+            $columnCodigoBene TEXT NOT NULL,
+            $columnDataNasc TEXT NOT NULL,
+            $columnSexo TEXT NOT NULL,
+            $columnTelefone TEXT NOT NULL,
+            $columnCidade TEXT NOT NULL
           )
           ''');
   }
 
   Future<int> insert(
       {required String nome,
-      required String sobrenome,
-      required String email,
-      required String cfm}) async {
+      required String codigoBene,
+      required String dataNasc,
+      required String sexo,
+      required String telefone,
+      required String cidade}) async {
     Database db = await instance.database;
     return await db.insert(table, {
       'name': nome,
-      'sobrenome': sobrenome,
-      'email': email,
-      'cfm': cfm,
+      'codigoBene': codigoBene,
+      'dataNasc': dataNasc,
+      'sexo': sexo,
+      'telefone': telefone,
+      'cidade': cidade
     });
   }
 

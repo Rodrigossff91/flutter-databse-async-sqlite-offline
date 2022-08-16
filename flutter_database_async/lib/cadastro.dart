@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_database_async/open_connect_sqlite.dart';
 import 'package:flutter_offline/flutter_offline.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Cadastro extends StatefulWidget {
@@ -21,6 +22,17 @@ class _CadastroState extends State<Cadastro> {
   late TextEditingController telefone;
 
   late Database connection;
+  late bool sexoMasc;
+
+  var maskFormatterPhone = MaskTextInputFormatter(
+      mask: '(##) #####-####',
+      filter: {"#": RegExp(r'[0-9]')},
+      type: MaskAutoCompletionType.lazy);
+
+  var maskDateBorn = MaskTextInputFormatter(
+      mask: '##/##/####',
+      filter: {"#": RegExp(r'[0-9]')},
+      type: MaskAutoCompletionType.lazy);
 
   @override
   void initState() {
@@ -30,6 +42,7 @@ class _CadastroState extends State<Cadastro> {
     dataNasc = TextEditingController();
     cidade = TextEditingController();
     telefone = TextEditingController();
+    sexoMasc = true;
 
     super.initState();
   }
@@ -69,11 +82,20 @@ class _CadastroState extends State<Cadastro> {
 
   @override
   Widget build(BuildContext context) {
-    FocusScope.of(context).unfocus();
+    //  FocusScope.of(context).unfocus();
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: const Text('Cadastro'),
+          leading: ClipOval(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Image.asset(
+                'assets/carrefy.png',
+                color: Colors.white,
+              ),
+            ),
+          ),
           actions: [
             InkWell(
               onTap: (() {
@@ -164,7 +186,7 @@ class _CadastroState extends State<Cadastro> {
                           textInputAction: TextInputAction.done,
                           controller: cdBenefi,
                           onChanged: (_) {},
-                          keyboardType: TextInputType.name,
+                          keyboardType: TextInputType.number,
                           textCapitalization: TextCapitalization.sentences,
                           //inputFormatters: [UpperCaseTextFormatter()],
                           decoration: InputDecoration(
@@ -203,8 +225,9 @@ class _CadastroState extends State<Cadastro> {
                           //   focusNode: sobrenome,
                           textInputAction: TextInputAction.done,
                           controller: dataNasc,
+                          inputFormatters: [maskDateBorn],
                           onChanged: (_) {},
-                          keyboardType: TextInputType.name,
+                          keyboardType: TextInputType.number,
                           textCapitalization: TextCapitalization.sentences,
                           //inputFormatters: [UpperCaseTextFormatter()],
                           decoration: InputDecoration(
@@ -251,24 +274,72 @@ class _CadastroState extends State<Cadastro> {
                         ),
                         child: Row(
                           children: [
-                            Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  border: Border.all(color: Colors.black)),
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Visibility(
+                                  visible: sexoMasc == true,
+                                  child: Container(
+                                      width: 10,
+                                      height: 10,
+                                      decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          borderRadius:
+                                              BorderRadius.circular(100))),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      sexoMasc = true;
+                                    });
+                                  },
+                                  child: Container(
+                                    width: 20,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        border:
+                                            Border.all(color: Colors.black)),
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(
                               width: 10,
                             ),
                             const Text('Masculino'),
                             const Spacer(),
-                            Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  border: Border.all(color: Colors.black)),
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Visibility(
+                                  visible: sexoMasc == false,
+                                  child: Container(
+                                      width: 10,
+                                      height: 10,
+                                      decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          borderRadius:
+                                              BorderRadius.circular(100))),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      sexoMasc = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    width: 20,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        border:
+                                            Border.all(color: Colors.black)),
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(
                               width: 10,
@@ -295,8 +366,9 @@ class _CadastroState extends State<Cadastro> {
                           //   focusNode: sobrenome,
                           textInputAction: TextInputAction.done,
                           controller: telefone,
+                          inputFormatters: [maskFormatterPhone],
                           onChanged: (_) {},
-                          keyboardType: TextInputType.name,
+                          keyboardType: TextInputType.number,
                           textCapitalization: TextCapitalization.sentences,
                           //inputFormatters: [UpperCaseTextFormatter()],
                           decoration: InputDecoration(
@@ -370,7 +442,8 @@ class _CadastroState extends State<Cadastro> {
                                 nome: nome.text,
                                 codigoBene: cdBenefi.text,
                                 dataNasc: dataNasc.text,
-                                sexo: 'Masculino',
+                                sexo:
+                                    sexoMasc == true ? 'Masculino' : 'Feminino',
                                 telefone: telefone.text,
                                 cidade: cidade.text);
 
